@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('git checkout') {
+            steps {
+                git 'https://github.com/Sudhakar20000/New_Pro.git'
+            }
+        }
+        stage('mvn build') {
+            steps {
+                // Make sure you're running the Maven command in the correct directory
+                dir('my-java-app') {
+                    sh 'mvn clean package'
+                }
+            }
+        }
+        stage('image') {
+            steps {
+                dir('my-java-app') {
+                    sh 'docker build -t new-img .'
+                }
+            }
+        }
+        stage('deploy') {
+            steps {
+                sh 'docker run -d -p 9060:8080 --name cont1 new-img'
+            }
+        }
+    }
+}
